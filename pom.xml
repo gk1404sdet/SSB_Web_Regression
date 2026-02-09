@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.moolya</groupId>
+    <artifactId>moolya-test-automation</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!-- ===================== PROPERTIES ===================== -->
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Versions -->
+        <version.selenium-java>4.34.0</version.selenium-java>
+        <version.cucumber-java>7.23.0</version.cucumber-java>
+        <version.testng>7.11.0</version.testng>
+        <version.cucumber-junit>4.13.2</version.cucumber-junit>
+        <version.cucumber-reporting>5.7.0</version.cucumber-reporting>
+        <version.maven-surefire-plugin>3.5.3</version.maven-surefire-plugin>
+
+        <!-- Reporting -->
+        <version.extentreports-cucumber7-adapter>1.14.0</version.extentreports-cucumber7-adapter>
+        <version.extentreports-pdf>1.0.2</version.extentreports-pdf>
+        <version.allure>2.27.0</version.allure>
+        <version.allure.maven>2.12.0</version.allure.maven>
+
+        <!-- Parallel -->
+        <threadCount>1</threadCount>
+    </properties>
+
+    <!-- ===================== BUILD ===================== -->
+    <build>
+
+        <pluginManagement>
+            <plugins>
+
+                <!-- Surefire -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.maven-surefire-plugin}</version>
+                    <configuration>
+                        <properties>
+                            <property>
+                                <name>dataproviderthreadcount</name>
+                                <value>${threadCount}</value>
+                            </property>
+                        </properties>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <!-- Surefire -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <!-- Allure Maven Plugin -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${version.allure.maven}</version>
+            </plugin>
+
+            <!-- Clean Allure Results -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>target/allure-results</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- ===================== DEPENDENCIES ===================== -->
+    <dependencies>
+
+        <!-- Selenium -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${version.selenium-java}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Cucumber -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${version.cucumber-java}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>${version.cucumber-java}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>${version.cucumber-java}</version>
+        </dependency>
+
+        <!-- TestNG (IMPORTANT) -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${version.testng}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--Junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.cucumber-junit}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- Extent Reports -->
+        <dependency>
+            <groupId>tech.grasshopper</groupId>
+            <artifactId>extentreports-cucumber7-adapter</artifactId>
+            <version>${version.extentreports-cucumber7-adapter}</version>
+        </dependency>
+
+        <!-- Cucumber HTML Report -->
+        <dependency>
+            <groupId>net.masterthought</groupId>
+            <artifactId>cucumber-reporting</artifactId>
+            <version>${version.cucumber-reporting}</version>
+        </dependency>
+
+        <!-- Allure -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-cucumber7-jvm</artifactId>
+            <version>${version.allure}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${version.allure}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
