@@ -14,5 +14,8 @@ public class TestContext {
     public CredsLoader credsLoader;
 
     public LoginPage loginPage;
+    public AccountPage accountPage;
+    public GuestUserPage guestUserPage;
+
 
 }

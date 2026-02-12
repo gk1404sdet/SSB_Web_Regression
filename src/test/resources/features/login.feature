@@ -24,6 +24,7 @@ Feature: User Login Functionality with Valid and Invalid Data
     When user taps on the Login button
     And user enters a mobile number
     And user clicks on the Continue button
+    And user validates that the maximum OTP limit has been reached
     Then user enters the OTP
     And user clicks on the Continue button for OTP validation
     And user validates that the appropriate OTP error message is displayed
@@ -36,11 +37,12 @@ Feature: User Login Functionality with Valid and Invalid Data
     When user taps on the Login button
     And user enters a mobile number
     And user clicks on the Continue button
+    And user validates that the maximum OTP limit has been reached
     Then user enters the OTP
     And user clicks on the Continue button for OTP validation
     And user validates that the appropriate OTP error message is displayed
 
-  @regression @TC109 @login
+  @regression @TC109
   Scenario: Verify the logout functionality
     Given user launches the application
     When user taps on the Login button
@@ -49,4 +51,6 @@ Feature: User Login Functionality with Valid and Invalid Data
     Then user enters the OTP
     And user clicks on the Continue button for OTP validation
     Then system should display the appropriate login status
-    And
+    And user hover the profile menu button
+    And user clicks on the logout button
+

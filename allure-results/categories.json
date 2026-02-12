@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Product defects",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*AssertionError.*|.*Expected.*but.*|.*Validation failed.*"
+  },
+  {
+    "name": "Automation issues",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*NoSuchElementException.*|.*TimeoutException.*|.*StaleElementReferenceException.*|.*ElementNotInteractableException.*"
+  },
+  {
+    "name": "Environment issues",
+    "matchedStatuses": ["broken"],
+    "messageRegex": ".*RuntimeException.*|.*Connection refused.*|.*Could not start a new session.*"
+  }
+]

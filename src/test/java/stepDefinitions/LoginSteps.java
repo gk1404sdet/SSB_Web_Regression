@@ -2,7 +2,6 @@ package stepDefinitions;
 
 import context.TestContext;
 import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -13,18 +12,17 @@ import utilities.ConfigLoader;
 
 public class LoginSteps {
 
-    private final TestContext context;
-    private ConfigLoader configLoader;
-    private final Scenario scenario;
-
-    private LoginPage loginPage;
+    TestContext context;
+    ConfigLoader configLoader;
+    Scenario scenario;
+    LoginPage loginPage;
 
 
     public LoginSteps(TestContext context) {
         this.context = context;
-        this.configLoader = new ConfigLoader();
-        this.scenario = context.scenario;
-        this.loginPage = new LoginPage(context.driver);
+        scenario = context.scenario;
+        configLoader = new ConfigLoader();
+        loginPage = new LoginPage(context.driver);
     }
 
     @Given("user launches the application")
@@ -45,7 +43,13 @@ public class LoginSteps {
     }
     @When("user clicks on the Continue button")
     public void user_clicks_on_the_continue_button() {
-        loginPage.clickContinueButton();
+        loginPage.clickOnContinue();
+    }
+    @When("user validates that the maximum OTP limit has been reached")
+    public void user_validates_that_the_maximum_otp_limit_has_been_reached() {
+        if (loginPage.isMaxOtpLimitDisplayed()) {
+            Assert.fail("The maximum OTP limit has been reached");
+        }
     }
     @Then("user enters the OTP")
     public void user_enters_the_otp() {
@@ -56,7 +60,7 @@ public class LoginSteps {
     }
     @When("user clicks on the Continue button for OTP validation")
     public void user_clicks_on_the_continue_button_for_otp_validation() {
-        loginPage.clickContinueButton();
+        loginPage.clickOnContinue();
     }
     @Then("system should display the appropriate login status")
     public void system_should_display_the_appropriate_login_status() {
@@ -73,9 +77,10 @@ public class LoginSteps {
     }
     @Then("user validate that the appropriate error message is displayed")
     public void user_validate_that_the_appropriate_error_message_is_displayed() {
-        Assert.assertEquals("Please enter a valid number", context.credsLoader.get("invalidUserNumberErrorMessage"));
+        String actualText = loginPage.getInvalidNumberText();
+        Assert.assertTrue(actualText.contains("Please enter a valid number"), "Invalid Mobile Number");
+        scenario.log("Successfully verified the Invalid number Credentials");
     }
-
 
     @When("user enters a mobile number")
     public void user_enters_a_mobile_number() {
@@ -90,11 +95,20 @@ public class LoginSteps {
     }
     @Then("user validates that the appropriate OTP error message is displayed")
     public void user_validates_that_the_appropriate_otp_error_message_is_displayed() {
-        Assert.assertEquals("Please enter a valid OTP", context.credsLoader.get("invalidOTPErrorMessage"));
+        String actualText = loginPage.getInvalidOTPErrorText();
+        Assert.assertTrue(actualText.contains("Please enter a valid OTP"), "Please enter a valid OTP");
+        scenario.log("Successfully verified the Invalid OTP");
     }
     @Then("user validates that the OTP is resent successfully")
     public void user_validates_that_the_OTP_is_resent_successfully() {
-        Assert.assertEquals("An OTP has been sent again", context.credsLoader.get("ResendOTPMessage"));
+        String actualText = loginPage.getResendOTPMessageText();
+        Assert.assertTrue(actualText.contains("An OTP has been sent again"), "OTP has been sent again");
+        scenario.log("Successfully verified the Resend OTP Message");
+    }
+
+    @Then("user clicks on the logout button")
+    public void user_clicks_on_the_logout_button() {
+        loginPage.clickLogoutButton();
     }
 
 }
