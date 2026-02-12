@@ -17,10 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Versions -->
-        <version.selenium-java>4.34.0</version.selenium-java>
+        <version.selenium-java>4.40.0</version.selenium-java>
         <version.cucumber-java>7.23.0</version.cucumber-java>
-        <version.testng>7.11.0</version.testng>
+        <version.testng>7.9.0</version.testng>
         <version.cucumber-junit>4.13.2</version.cucumber-junit>
+        <version.cucumber-java>7.11.0</version.cucumber-java>
         <version.cucumber-reporting>5.7.0</version.cucumber-reporting>
         <version.maven-surefire-plugin>3.5.3</version.maven-surefire-plugin>
 
@@ -51,6 +52,12 @@
                                 <name>dataproviderthreadcount</name>
                                 <value>${threadCount}</value>
                             </property>
+
+                        <filesets>
+                            <fileset>
+                                <directory>target/allure-results</directory>
+                            </fileset>
+                        </filesets>
                         </properties>
                     </configuration>
                 </plugin>
@@ -124,7 +131,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${version.testng}</version>
-            <scope>test</scope>
         </dependency>
 
         <!--Junit -->
