@@ -1,12 +1,9 @@
 package pages;
 
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -30,16 +27,16 @@ public class CartPage extends BasePage{
     private final By moveToWishlist = By.xpath("//button[contains(text(),'move to wishlist')]");
     private final By remove = By.xpath("//button[contains(text(),'Remove')]");
     private final By check = By.xpath("//button[contains(text(),'Change Address')]");
-//    private final By pinCode = By.xpath("//input[@placeholder='Enter Pincode']");
+    //    private final By pinCode = By.xpath("//input[@placeholder='Enter Pincode']");
     private final By pinCode = By.xpath("//input[@id='outlined-basic']");
     private final By pinCodeDialogBox = By.xpath("//div[contains(@class,'MuiModal-root')]");
     private final By addWishlist = By.xpath("(//div[@class='MuiGrid-root css-shd5b'])[1]");
     public final By emptyWishlist = By.xpath("//p[contains(text(),'Your Wishlist is Empty')]");
+    public final By emptyCart = By.xpath("//p[contains(text(),'Your Bag Feels Too Light!')]");
     public final By SSBeautyLogoCart = By.xpath("//img[@src='/ssb logo new.png']");
     private final By homeButtonValidation = By.xpath("//img[@alt='Image 1']");
     private final By wishlistViewAll = By.xpath("//p[contains(text(), 'View all')]");
-
-
+    private final By basketLoadingWidget = By.xpath("(//*[local-name()='g' and @class='png'])[2]");
 
 
     public CartPage(WebDriver driver) {
@@ -97,6 +94,7 @@ public class CartPage extends BasePage{
             Thread.sleep(2000);
             safeClick(element);
             System.out.println(increaseChoice ? "Quantity Increased" : "Quantity Decreased");
+            validateErrorMessageByPartialText("Quantity has been updated", "Quantity has been updated");
         }
     }
 
@@ -119,26 +117,39 @@ public class CartPage extends BasePage{
     }
 
     public void validateProductSortBy() {
+
         isElementPresent(sortBy);
 
     }
 
     public void clickOnMoveToWishlist() {
+
         isElementPresent(moveToWishlist);
         safeClick(moveToWishlist);
     }
+
     public void clickOnRemoveItem() {
+
         isElementPresent(remove);
         safeClick(remove);
     }
+
     public void clickOnCheckOption() {
+
         safeClick(check);
     }
+
     public void enterThePinCode(String pin) {
+
         waitForPresenceOfElement(pinCodeDialogBox);
         scrollAndClickUsingJS(pinCode);
-        enterTextOnElementPinCode(pinCode, pin);
+        enterTextOnElement(pinCode, pin);
 
+    }
+
+    public void validateBasketLoadingWidget() {
+
+        validateElements(basketLoadingWidget);
     }
 
 

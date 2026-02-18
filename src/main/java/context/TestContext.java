@@ -1,6 +1,7 @@
 package context;
 
 import io.cucumber.java.Scenario;
+import io.cucumber.messages.types.Product;
 import org.openqa.selenium.WebDriver;
 import pages.*;
 import utilities.ConfigLoader;
@@ -15,7 +16,10 @@ public class TestContext {
 
     public LoginPage loginPage;
     public AccountPage accountPage;
-    public GuestUserPage guestUserPage;
-
-
+    public WishlistPage wishlistPage;
+    public HomePage homePage;
+    public CheckoutPage checkoutPage;
+    public ProductDetailsPage pdp;
+    public ProductListingPage plp;
+    public HeaderPage headerPage;
 }

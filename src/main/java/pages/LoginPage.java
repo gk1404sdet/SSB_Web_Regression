@@ -76,6 +76,12 @@ public class LoginPage extends BasePage {
     public String getResendOTPMessageText() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(resendOTPMessage)).getText();
     }
+
+
+    public void ValidateUserID() {
+
+        validateElements(userNameField);
+    }
 }
 
 

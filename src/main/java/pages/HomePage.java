@@ -10,11 +10,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-public class HomePage extends BasePage{
+public class HomePage extends BasePage {
 
-    private final JavascriptExecutor js = (JavascriptExecutor) driver;
+    private static JavascriptExecutor js;
 
-    // ---------- Locators ----------
+    private final By categories = By.xpath("//*[text()='Categories']");
+    private final By Concealers = By.xpath("//*[text()='Concealers']");
+
+
+
     private final By homeButton = By.xpath("//img[@alt='Image 1']");
     private final By category = By.xpath("//a[contains(text(),'Categories')]");
     private final By search = By.xpath("//input[@placeholder='Search']");
@@ -42,26 +46,35 @@ public class HomePage extends BasePage{
     private final By change = By.xpath("//button[contains(text(),'CHANGE')]");
 
 
-
     public HomePage(WebDriver driver) {
         super(driver);
     }
 
-    // ---------- Common Actions ----------
+    public void moveToCategories() {
+        moveToElement(categories);
+    }
+
+    public void clickConcealers() {
+        click(Concealers);
+    }
+
+
+
     public void clickOnHomeButton(int max) {
         driver.navigate().refresh();
-        isDisplayed(homeButton);
+        isElementPresent(homeButton);
         for (int i = 0; i < max; i++) {
             safeClick(homeButton);
+            waitFor(3);
         }
     }
 
     public void clickOnCategory() {
-        isDisplayed(category);
+        isElementPresent(category);
         moveToElement(category);
     }
     public void validateCategory() {
-        isDisplayed(category);
+        isElementPresent(category);
     }
 
     public void validateSearch() {
@@ -70,7 +83,7 @@ public class HomePage extends BasePage{
     }
 
     public void enterKeywordInSearchBox() {
-        isDisplayed(search);
+        isElementPresent(search);
         safeClick(search);
         waitFor(2);
 
@@ -132,10 +145,8 @@ public class HomePage extends BasePage{
         try {
             moveToAnotherProduct();
 
-            if (isDisplayed(shade)) {
+            if (isElementPresent(shade)) {
                 safeClick(shade);
-//                isElementPresent(shadePopup);
-//                safeClick(shadePopup);
             }
             if (isElementPresent(addToBag)) {
                 safeClick(addToBag);
@@ -232,5 +243,4 @@ public class HomePage extends BasePage{
             return false;
         }
     }
-
 }

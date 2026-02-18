@@ -39,6 +39,12 @@ public class Hooks {
 
         context.loginPage = new LoginPage(context.driver);
         context.accountPage = new AccountPage(context.driver);
+        context.wishlistPage = new WishlistPage(context.driver);
+        context.homePage = new HomePage(context.driver);
+        context.checkoutPage = new CheckoutPage(context.driver);
+        context.pdp = new ProductDetailsPage(context.driver);
+        context.plp = new ProductListingPage(context.driver);
+        context.headerPage = new HeaderPage(context.driver);
     }
 
     @Before(order = 2)

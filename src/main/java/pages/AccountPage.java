@@ -1,10 +1,12 @@
 package pages;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
 import java.io.File;
@@ -22,7 +24,7 @@ public class AccountPage extends BasePage {
     private final By manageAddress = By.xpath("//li[contains(text(),'Manage Address')]");
     private final By fcc = By.xpath("//li[contains(text(),'First Citizen Club')]");
     private final By myWallet = By.xpath("//li[contains(text(),'My Wallet')]");
-    private final By helpAndSupport = By.xpath("//li[contains(text(),'Help & Support')]");
+    private final By helpAndSupport = By.xpath("//*[text()='Help & Support']");
     private final By privacyPolicy = By.xpath("//li[contains(text(),'Privacy Policy')]");
     private final By firstName1 = By.xpath("//*[text()='First Name']");
     private final By firstCardBenefit = By.xpath("//*[text()='Updates On Latest Sales & Discounts ']");
@@ -49,31 +51,53 @@ public class AccountPage extends BasePage {
     private final By pinCode = By.xpath("//input[@placeholder='Enter Pin Code']");
     private final By address = By.xpath("//textarea[@placeholder='Enter Address']");
     private final By addressType = By.xpath("//span[contains(text(),'Work')]");
-    private final By addAdd = By.xpath("//button[contains(text(),'add address')]");
+    private final By addAdd = By.xpath("//*[text()='add address']");
+    private final By addressUpdated = By.xpath("//*[(text()='Address Added Successfully !')]");
+    private final By existingAddressUpdated = By.xpath("//*[(text()=' Address Updated Successfully! ')]");
     private final By editOption = By.xpath("(//button[contains(text(),'Edit')])[2]");
     private final By updateAddress = By.xpath("//button[contains(text(),'update address')]");
-    private final By deleteAddress = By.xpath("(//button[contains(text(),'Remove')])[2]");
-    private final By confirmDelete = By.xpath("(//p[contains(text(),'Remove Address')])[3]");
+    private final By deleteAddress = By.xpath("(//*[text()='Remove'])[2]");
+    private final By confirmDelete = By.xpath("//*[text()='Remove Address']");
+    private final By confirmMessage = By.xpath("//*[text()=' Address Deleted Successfully! ']");
     private final By onlineName = By.xpath("//*[text()='Online']");
     private final By firstOrder = By.xpath("//*[@id=\"__next\"]/div[1]/div[3]/div[2]/div[2]/div/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/p");
     private final By orderID = By.xpath("//*[@id=\"__next\"]/div[1]/div[3]/div[2]/div[2]/div/div/div[1]/div/div[2]/div/div[1]/div/p[2]");
     private final By searchInOrders = By.xpath("//*[@id=':r3:']");
     private final By profilePicture = By.xpath("//*[name()='path' and contains(@d,'M12 12c2.2')]");
+    private final By avatar = By.xpath("//img[contains(@class,'MuiAvatar')]");
     private final By firstName = By.name("firstName");
     private final By lastName = By.name("lastName");
     private final By gender = By.xpath("//input[@type='radio']");
     private final By updateChangesBtn = By.xpath("//button[contains(text(),'Update Changes')]");
+    private final By profileUpdated =  By.xpath("//*[text()='Profile updated']");
     private final By firstConnect = By.xpath("(//p[contains(text(),'FIRST CONNECT')])[2]");
     private final By silver = By.xpath("(//p[contains(text(),'SILVER EDGE')])[2]");
     private final By golden = By.xpath("//p[contains(text(),'GOLDEN GLOW')]");
     private final By platinum = By.xpath("//p[contains(text(),'PLATINUM AURA')]");
     private final By black = By.xpath("//p[contains(text(),'BLACK')]");
-    public final By contactUs = By.xpath("//*[text()='Contact Us']");
-    
+    private final By contactUs = By.xpath("//*[text()='Contact Us']");
+    private final By walletPage = By.xpath("//*[text()='SSBeauty Wallet Advantages']");
+    private final By advantageOfWallet = By.xpath("//*[text()='SSBeauty Wallet can be used on both shoppersstop.com and ssbeauty.in']");
+    private final By walletActivationButton = By.xpath("//*[text()='ACTIVATE WALLET']");
+    private final By walletOTP = By.xpath("//*[text()='VERIFY MOBILE NUMBER']");
+    private final By pleaseNote = By.xpath("//*[text()='Please Note']");
+    private final By helpAndSupportPage = By.xpath("//*[text()='Browse Topics']");
+    private final By getInTouchButton = By.xpath("//*[text()='Get in Touch']");
+    private final By contactFirstName = By.name("first_name");
+    private final By contactLastName = By.name("last_name");
+    private final By contactEmail = By.name("emailId");
+    private final By contactPhone = By.name("mobile_no");
+    private final By contactTitle = By.name("title");
+    private final By selectCategory = By.id("demo-simple-select");
+    private final By selectBilling = By.xpath("//li[@data-value='Billing']");
+    private final By selectSubCategory = By.xpath("//*[text() ='Billing - Store']");
+    private final By contactOrder = By.name("order_no");
+    private final By contactComment = By.name("comment");
+    private final By contactCaptcha = By.xpath("//p[contains(text(),'Type the above captcha')]/preceding::div[contains(@class,'MuiStack-root')][3]");
+    private final By captchaEdit =  By.name("username");
+    private final By submitButton = By.xpath("//*[text()='submit']");
 
 
-    
-    
     
     public AccountPage(WebDriver driver) {
         super(driver);
@@ -188,11 +212,8 @@ public class AccountPage extends BasePage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(upgradeBlackButton)).getText();
     }
 
-    public void scrollDownPage() {
-        if(!isDisplayed(contactUs)) {
-            scrollDown(contactUs);
-        }
-        isDisplayed(contactUs);
+    public void scrollDown() {
+        scrollDown(contactUs);
     }
 
     public String verifyingDown() {
@@ -214,15 +235,19 @@ public class AccountPage extends BasePage {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].style.display='block';", upload);
 
-        String path = System.getProperty("user.dir") + File.separator+ ("src/test/resources/Profile/ssb_logo_new.png").replace("/",File.separator);
+        String path = System.getProperty("user.dir") + File.separator+ ("src/test/resources/credentials/ssb_logo_new.png").replace("/",File.separator);
         upload.sendKeys(path);
 
-        String a = driver.findElement(By.id("upload-button")).getAttribute("src");
-        System.out.println(a);
+        wait.until(ExpectedConditions.attributeContains(
+                avatar,
+                "src",
+                "data:image"
+        ));
     }
 
     public String validateProfilePicture() {
-        return driver.findElement(By.id("upload-button")).getAttribute("src");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(avatar));
+        return driver.findElement(avatar).getAttribute("src");
     }
 
     public String getEnteredName() {
@@ -240,12 +265,14 @@ public class AccountPage extends BasePage {
     public void enterFirstName(String name) {
         isWebElementDisplayed(firstName);
         safeClick(firstName);
+        clear(firstName);
         enterTextOnElement(firstName, name);
     }
 
     public void enterLastName(String name) {
         isWebElementDisplayed(lastName);
         safeClick(lastName);
+        clear(lastName);
         enterTextOnElement(lastName, name);
     }
 
@@ -271,6 +298,9 @@ public class AccountPage extends BasePage {
         }
     }
 
+    public String getUpdateChangesText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(profileUpdated)).getText();
+    }
 
     public void clickOnManageAddress() {
         safeClick(manageAddress1);
@@ -293,15 +323,20 @@ public class AccountPage extends BasePage {
     }
 
     public void enterTheMobile(String no) {
+        isElementPresent(mobNo);
+        safeClick(mobNo);
         enterTextOnElement(mobNo, no);
     }
 
     public void enterThePinCode(String pin) {
+        isElementPresent(pinCode);
+        safeClick(pinCode);
         enterTextOnElement(pinCode, pin);
     }
 
     public void enterTheAddress(String adr) {
         scrollDown(address);
+        safeClick(address);
         enterTextOnElement(address, adr);
     }
 
@@ -312,6 +347,16 @@ public class AccountPage extends BasePage {
     public void clickOnAddAddress() {
         isElementPresent(addAdd);
         safeClick(addAdd);
+    }
+
+    public String getAddressUpdatedText() throws InterruptedException {
+        Thread.sleep(2000);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(addressUpdated)).getText();
+    }
+
+    public String getExistingAddressUpdatedText() throws InterruptedException{
+        Thread.sleep(2000);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(existingAddressUpdated)).getText();
     }
 
     public void clickOnEdit() {
@@ -332,6 +377,11 @@ public class AccountPage extends BasePage {
     public void clickOnConfirmRemoveButton() {
         isElementPresent(confirmDelete);
         safeClick(confirmDelete);
+    }
+
+    public String getConfirmDeleteText() throws InterruptedException {
+        Thread.sleep(2000);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(confirmMessage)).getText();
     }
 
     public void clickOnMyOrders() {
@@ -380,5 +430,96 @@ public class AccountPage extends BasePage {
             }
         }
         return missingComponents;
+    }
+
+    public void clickMyWallet() {
+        isElementPresent(myWallet);
+        safeClick(myWallet);
+    }
+
+    public String getMyWalletText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(walletPage)).getText();
+    }
+
+    public String getWalletAdvantagesText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(advantageOfWallet)).getText();
+    }
+
+    public void clickWalletActivationButton() {
+        click(walletActivationButton);
+    }
+
+    public String getWalletActivationOTPText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(walletOTP)).getText();
+    }
+
+    public String getWalletPleaseNoteText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(pleaseNote)).getText();
+    }
+
+    public void clickHelpAndSupport() {
+        click(helpAndSupport);
+    }
+
+    public String getHelpAndSupportText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(helpAndSupportPage)).getText();
+    }
+
+    public void clickGetInTouch() {
+        click(getInTouchButton);
+    }
+
+    public void enterContactFirstName(String str) {
+        enterTextOnElement(contactFirstName, str);
+    }
+
+    public void enterContactLastName(String str) {
+        enterTextOnElement(contactLastName, str);
+    }
+
+    public void enterContactEmail(String str) {
+        enterTextOnElement(contactEmail, str);
+    }
+
+    public void enterContactPhone(String str) {
+        enterTextOnElement(contactPhone, str);
+    }
+
+    public void enterContactTitle(String str) {
+        enterTextOnElement(contactTitle, str);
+    }
+
+    public void selectCategory() {
+        safeClick(selectCategory);
+        waitForVisibleElement(selectBilling);
+        safeClick(selectBilling);
+    }
+
+    public void selectSubCategory() {
+        safeClick(selectCategory);
+        waitForVisibleElement(selectSubCategory);
+        safeClick(selectSubCategory);
+    }
+
+    public void enterOrderID(String str) {
+        enterTextOnElement(contactOrder, str);
+    }
+
+    public void enterComments(String str) {
+        enterTextOnElement(contactComment, str);
+    }
+
+    public String getCaptchaText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(contactCaptcha)).getText();
+    }
+
+    public void enterCaptcha(String str) {
+        click(captchaEdit);
+        enterTextOnElement(captchaEdit, str);
+    }
+
+    public void clickSubmitButton() {
+        waitForVisibleElement(submitButton);
+        click(submitButton);
     }
 }

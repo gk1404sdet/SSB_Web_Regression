@@ -21,17 +21,6 @@ Feature: Verify the Account Module in the Application
       | Help & Support      |
       | Privacy Policy      |
 
-  @regression
-  Scenario: Verify components of FCC page
-    When user hover the profile menu button
-    And user clicks on the FCC option
-    When system should display the following components in the FCC section
-      | FIRST CONNECT |
-      | SILVER EDGE   |
-      | GOLDEN GLOW   |
-      | PLATINUM AURA |
-      | BLACK         |
-
   @regression @TC_046
   Scenario: Ensure the navigation to accounts section
     When user hover the profile menu button
@@ -83,7 +72,7 @@ Feature: Verify the Account Module in the Application
     Then user clicks join now button
     Then Validating Join Now & Auto-Upgrade flow for black card
 
-  @regression @TC_058 @act
+  @regression @TC_058
   Scenario: Ensure Scroll-to-Top (Up Arrow) button
     When user hover the profile menu button
     Then user clicks on the FCC option
@@ -108,6 +97,16 @@ Feature: Verify the Account Module in the Application
     And user wait two seconds
     Then profile picture should be updated successfully
 
+  @regression @TC_062
+  Scenario: Ensure editing the profile details
+    When user hover the profile menu button
+    And user clicks on the my Profile option
+    And user update their first name
+    And user update their last name
+    And user update their gender details
+    And user clicks on the update changes
+    And user validate that personal details successfully updated
+
   @regression @TC_063
   Scenario: Verify CRUD on the Address page
     When user hover the profile menu button
@@ -130,9 +129,14 @@ Feature: Verify the Account Module in the Application
     And user selects a address type as work
     And user clicks on the save changes
     And Validate that existing address has updated
-    And user is able to delete exiting address
+
+  @regression @TC_063
+  Scenario: Ensure the delete address
+    When user hover the profile menu button
+    And user clicks on the manage address
+    When user is able to delete exiting address
     And user clicks on the confirm remove button for delete address
-    And user validate that delete address message is displayed
+    Then user validate that delete address message is displayed
 
   @regression @TC_064
   Scenario: Ensure navigation to My Orders Section
@@ -152,14 +156,70 @@ Feature: Verify the Account Module in the Application
     And user selects the first product
     And Capture expected Order ID from the list and validating
 
-  @regression @TC_062
-  Scenario: Verify CRUD on the Address page
+  @regression @TC_087
+  Scenario: Ensure the navigation to My Wallet
     When user hover the profile menu button
-    And user clicks on the my Profile option
-    And user update their first name
-    And user update their last name
-    And user update their gender details
-    And user clicks on the update changes
-    And user validate that personal details successfully updated
+    Then user clicks on the Wallet option
+    Then Validating the Wallet page
 
+  @regression @TC_088
+  Scenario: Ensure the SSBeauty Wallet Advantages details on wallet page
+    When user hover the profile menu button
+    Then user clicks on the Wallet option
+    Then Validating the Wallet page for SSBeauty Wallet Advantages Details
 
+  @regression @TC_089
+  Scenario: Ensure Activate Wallet button for a user who has not activated wallet previously
+    When user hover the profile menu button
+    And user clicks on the Wallet option
+    Then user clicks on the Activate button
+    And Validates whether the OTP pop-up is displayed
+
+  @regression @TC_093
+  Scenario: Ensure that the “Please Note” section is readable on the My Wallet page
+    When user hover the profile menu button
+    And user clicks on the Wallet option
+    Then Validate that please Note section is displayed
+
+  @regression @TC_098
+  Scenario: Verify components of FCC page
+    When user hover the profile menu button
+    And user clicks on the FCC option
+    When system should display the following components in the FCC section
+      | FIRST CONNECT |
+      | SILVER EDGE   |
+      | GOLDEN GLOW   |
+      | PLATINUM AURA |
+      | BLACK         |
+
+  @regression @TC_104
+  Scenario: Validate Help & Support navigation
+     When user hover the profile menu button
+     And user clicks on the help and support
+     Then Validate Help and Support page
+
+  @regression @TC_105
+  Scenario: Ensure “Still Confused?” section navigates to Contact Us page & Chatbot icon is visible
+    When user hover the profile menu button
+    And user clicks on the help and support
+    And user clicks on the get in touch button
+    Then Validate that contact us page is displayed
+
+  @regression @TC_106 @contactUs
+  Scenario: Validate the functionality of the Contact Us page
+    When user hover the profile menu button
+    And user clicks on the help and support
+    And user clicks on the get in touch button
+    And Validate that contact us page is displayed
+    And user enters the first name
+    And user enters the last name
+    And user enters the email ID
+    And user enters the mobile number
+    And user enters the title
+    Then user selects the category
+    And user selects the subcategory
+    And user enters the Order ID
+    And user enters the comments
+    And user reads the captcha and stores it locally
+    And user enters the stored captcha
+    And user clicks on the Submit button
