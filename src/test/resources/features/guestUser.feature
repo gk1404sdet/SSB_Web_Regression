@@ -5,7 +5,6 @@ Feature: Verify the guest user Functionality
 
   @regression @TC_007
   Scenario: Verifying website loads for guest user
-    Given user is on the homepage
     Then User validates categories from homepage
     And User validates search from homepage
 
@@ -29,12 +28,12 @@ Feature: Verify the guest user Functionality
   Scenario: Verifying strip banner and navigation to FCC page with benefits as guest user
     Given user is on the homepage
     Then user clicks strip banner
-    And user enters the valid mobile number
-    And user clicks the Continue button
+    And user enters a valid mobile number
+    And user clicks on the Continue button
     Then user enters the OTP
-    And user validates otp result
+    And user clicks on the Continue button for OTP validation
     And system should display the appropriate login status
-    When system should display the following components in the FCC section after clicking strip banner
+    When system should display the following components in the FCC section
       | FIRST CONNECT |
       | SILVER EDGE   |
       | GOLDEN GLOW   |
@@ -49,6 +48,7 @@ Feature: Verify the guest user Functionality
     Then user validates foundations label from PLP
     And user selects a product from plp
     And User clicks on the add to bag
+    And User validate that product added to cart
     When user clicks on the cart icon in the header
     And user validate that cart is not empty
     Then system should display the following components on the cart page
@@ -67,6 +67,7 @@ Feature: Verify the guest user Functionality
     And User clicks on the view details
     And User switch new window
     And User clicks on the add to bag in PDP
+    And User validate that product added to cart
     When user clicks on the cart icon in the header
     And user validate that cart is not empty
     Then system should display the following components on the cart page
@@ -83,6 +84,7 @@ Feature: Verify the guest user Functionality
     Then user validates foundations label from PLP
     And user selects a product from plp
     And User clicks on the add to bag
+    And User validate that product added to cart
     When user clicks on the cart icon in the header
     And user validate that cart is not empty
     And user validates product remove x mark
@@ -94,10 +96,10 @@ Feature: Verify the guest user Functionality
   Scenario: Verifying guest user is prompted to log in when clicking the Wishlist icon
     Given user is on the homepage
     When user clicks on the wishlist icon in the header
-    And user enters the valid mobile number
-    And user clicks the Continue button
+    And user enters a valid mobile number
+    And user clicks on the Continue button
     Then user enters the OTP
-    And user validates otp result
+    And user clicks on the Continue button for OTP validation
     And system should display the appropriate login status
     And user validate that wishlist is not empty
 
@@ -134,6 +136,7 @@ Feature: Verify the guest user Functionality
     And user validate login id entry page
     Then User clicks close in login page
     And User clicks on the add to bag in PDP
+    And User validate that product added to cart
     When user clicks on the cart icon in the header
     And user validate that cart is not empty
 
@@ -147,6 +150,7 @@ Feature: Verify the guest user Functionality
     And User clicks on the view details
     And User switch new window
     And User clicks on the add to bag in PDP
+    And User validate that product added to cart
     When user clicks on the cart icon in the header
     And user validate that cart is not empty
     Then system should display the following components on the cart page
@@ -166,14 +170,15 @@ Feature: Verify the guest user Functionality
     Then user validates foundations label from PLP
     And user selects a product from plp
     And User clicks on the add to bag
+    And User validate that product added to cart
     When user clicks on the cart icon in the header
     And user validate that cart is not empty
     And User validate the product in cart
     And User clicks on the proceed to pay
-    And user enters the valid mobile number
-    And user clicks the Continue button
+    And user enters a valid mobile number
+    And user clicks on the Continue button
     Then user enters the OTP
-    And user validates otp result
+    And user clicks on the Continue button for OTP validation
     And User validate the product in cart
 
     ### Wishlist Feature testcase - Guest User ###

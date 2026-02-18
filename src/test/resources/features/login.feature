@@ -53,4 +53,5 @@ Feature: User Login Functionality with Valid and Invalid Data
     Then system should display the appropriate login status
     And user hover the profile menu button
     And user clicks on the logout button
+    And user validates that the Logout out successfully
 

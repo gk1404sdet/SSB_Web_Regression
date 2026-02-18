@@ -9,12 +9,9 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
-public class GuestUserPage extends BasePage{
-
-    public final JavascriptExecutor js = (JavascriptExecutor) driver;
+public class GuestUserPage extends BasePage {
 
     // ---------- Locators ----------
-
     private final By category = By.xpath("//a[contains(text(),'Categories')]");
     private final By termsOfUse = By.xpath("//p[contains(text(), 'Terms of Use')]");
     private final By termsAndConditions = By.xpath("//h3[contains(text(), 'TERMS & CONDITIONS')]");
@@ -50,23 +47,13 @@ public class GuestUserPage extends BasePage{
     private final By productCount = By.xpath("//div[contains(@class,'MuiGrid-item') and contains(@class,'MuiGrid-grid-xs-10')]");
 
 
-
     public GuestUserPage(WebDriver driver) {
         super(driver);
     }
 
     // ---------- Common Actions ----------
-
     public void clickOnTermsOfUse() {
-
         scrollAndClickUsingJS(termsOfUse);
-    }
-
-    public void validateTermsOfUsePage() {
-
-        isWebElementDisplayed(termsAndConditions);
-
-
     }
 
     public void enterKeyword(String str) {
@@ -99,6 +86,7 @@ public class GuestUserPage extends BasePage{
         switchToNewWindow();
         waitFor(2);
     }
+
 
     public void clickOnAddTCartPDP() {
         isElementPresent(addToBagPDP);

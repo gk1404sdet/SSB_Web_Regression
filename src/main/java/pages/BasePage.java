@@ -9,6 +9,7 @@ import org.testng.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,8 +40,23 @@ public class BasePage {
         el.sendKeys(value);
     }
 
+    protected void clear(By locator) {
+        driver.findElement(locator).clear();
+    }
+
     protected boolean isDisplayed(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
+        try {
+            return wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(locator)
+            ).isDisplayed();
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+
+    protected void waitForVisibleElement(By locator) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
     public boolean isElementPresentFast(By locator, int timeoutInSeconds) {
@@ -64,12 +80,6 @@ public class BasePage {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
     }
 
-    protected void waitForVisibleElement(By locator) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-    }
-
-
-
     public void clickOnElement(By element, int... param) {
         waitForPresenceOfElement(element);
         if (param.length == 1) {
@@ -85,14 +95,6 @@ public class BasePage {
     public void enterTextOnElement(By element, String value) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(element));
         wait.until(ExpectedConditions.elementToBeClickable(element));
-        driver.findElement(element).clear();
-        driver.findElement(element).sendKeys(value);
-    }
-
-    public void enterTextOnElementPinCode(By element, String value) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(element));
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-//        driver.findElement(element).click();
         driver.findElement(element).sendKeys(Keys.chord(Keys.CONTROL, "a"));
         driver.findElement(element).sendKeys(Keys.BACK_SPACE);
         driver.findElement(element).sendKeys(value);
@@ -167,14 +169,8 @@ public class BasePage {
     }
 
     public void scrollDown(By locator) {
-        WebElement element = wait.until(
-                ExpectedConditions.presenceOfElementLocated(locator)
-        );
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                element
-        );
-        wait.until(ExpectedConditions.visibilityOf(element));
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        executor.executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});", driver.findElement(locator));
     }
 
 
@@ -409,11 +405,23 @@ public class BasePage {
         try {
             WebElement searchElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 
-            org.testng.Assert.assertTrue(searchElement.isDisplayed(), "Search field is not displayed");
+            Assert.assertTrue(searchElement.isDisplayed(), "Search field is not displayed");
 
         } catch (Exception e) {
             Assert.fail("Search field validation failed - " + e.getMessage());
         }
     }
+
+    public void switchToWindowByIndex(int index) {
+
+        List<String> windows = new ArrayList<>(driver.getWindowHandles());
+
+        if (index < windows.size()) {
+            driver.switchTo().window(windows.get(index));
+        } else {
+            throw new RuntimeException("Window index not found: " + index);
+        }
+    }
+
 
 }

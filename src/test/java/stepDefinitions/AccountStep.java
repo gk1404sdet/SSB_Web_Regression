@@ -4,23 +4,13 @@ import context.TestContext;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import io.qameta.allure.Allure;
 import org.testng.Assert;
 import pages.AccountPage;
 import pages.LoginPage;
-import utilities.ConfigLoader;
-import utilities.CredsLoader;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -28,22 +18,20 @@ public class AccountStep {
 
     TestContext context;
     Scenario scenario;
-    ConfigLoader configLoader;
     AccountPage accountPage;
     LoginPage loginPage;
 
     public static String orderId;
-    public static String ExpectedOrderId;
+    public static String expectedOrderId;
+    public static String captcha;
 
     public AccountStep(TestContext context) {
         this.context = context;
         this.scenario = context.scenario;
-        this.configLoader = context.configLoader;
         loginPage = new LoginPage(context.driver);
         accountPage = new AccountPage(context.driver);
     }
 
-    // Verify Components of Account
     @When("user hover the profile menu button")
     public void user_hover_the_profile_menu_button() throws InterruptedException {
         Thread.sleep(3000);
@@ -57,7 +45,6 @@ public class AccountStep {
                 "Missing account components: " + missingComponents
         );
     }
-
     @When("user clicks on the my Profile option")
     public void user_clicks_on_the_my_profile_option() {
         accountPage.clickOnProfile();
@@ -68,7 +55,6 @@ public class AccountStep {
         Assert.assertTrue(actualText.contains("First Name"), "User not navigated to accounts page");
         scenario.log("User successfully Landed into the accounts Page");
     }
-
     @When("user clicks on the FCC option")
     public void user_clicks_on_the_FCC_option(){
         accountPage.clicksOnFCC();
@@ -79,7 +65,6 @@ public class AccountStep {
         Assert.assertTrue(actualText.contains("Membership"), "User not navigated to FCC page");
         scenario.log("User Successfully Landed Into The FCC Page");
     }
-
     @When("user clicks on first connect card")
     public void user_clicks_on_firstConnect(){
         accountPage.first_ConnectCard();
@@ -130,8 +115,6 @@ public class AccountStep {
         Assert.assertTrue(actualText.contains("4 Reward Points For Every ₹200 Purchase"), "Benefits for golden glow card is not visible or changed");
         scenario.log("Successfully verified the benefits for golden glow card");
     }
-
-
     @When("user clicks join now button")
     public void user_clicks_on_joinNow(){
         accountPage.clickJoinNow();
@@ -158,19 +141,16 @@ public class AccountStep {
         Assert.assertTrue(actualText.contains("Bag"), "Issue with Join Now or Auto-Upgrade flow for black card is not landed to Cart page");
         scenario.log("Successfully verified the Join Now & Auto-Upgrade flow for black card");
     }
-
     @When("Validating FCC cards for FCC users or not")
     public void user_verifies_the_FCCUsers() {
         String actualText = accountPage.verifyOnSilver();
         Assert.assertTrue(actualText.contains("Upgrade to Black"), "This is not FCC user");
         scenario.log("Successfully verified the FCC cards for FCC users");
     }
-
     @When("user scroll down the application")
     public void scroll_down() {
-        accountPage.scrollDownPage();
+        accountPage.scrollDown();
     }
-
     @When("verifying whether the page on the bottom or not")
     public void verifying_downPage() {
         String actualText = accountPage.verifyingDown();
@@ -187,14 +167,12 @@ public class AccountStep {
         Assert.assertTrue(actualText.contains("Membership"), "This is not in the top of the page");
         scenario.log("Successfully verified the page on the top side");
     }
-
     @Then("user should be navigated to the My Profile page")
     public void user_should_be_navigated_to_profile_page() {
         String actualText = accountPage.getFirstNameLabelText();
         Assert.assertTrue(actualText.contains("First Name"), "User not navigated to Profile page");
         scenario.log("User Successfully Landed Into The Profile Page");
     }
-
     @Then("user clicks on profile image icon")
     public void clickProfile(){
         accountPage.clickProfilePicture();
@@ -207,19 +185,16 @@ public class AccountStep {
     public void uploadProfile(){
         accountPage.uploadProfilePicture();
     }
-
     @Then("profile picture should be updated successfully")
     public void validateProfile(){
         String src = accountPage.validateProfilePicture();
-        System.out.println(src);
-        Assert.assertTrue(src.contains("profile"), "Profile picture not updated");
+        Assert.assertTrue(src != null && src.startsWith("data:image"), "Profile picture not updated");
         scenario.log("Profile picture updated successfully");
     }
-
     @When("user update their first name")
     public void user_update_their_first_name() {
-        String name1 = configLoader.get("address.firstName");
-        String name2 = configLoader.get("address.firstName1");
+        String name1 = context.credsLoader.get("address.firstName");
+        String name2 = context.credsLoader.get("address.firstName1");
 
         String currentName = accountPage.getEnteredName();
 
@@ -233,8 +208,8 @@ public class AccountStep {
     }
     @When("user update their last name")
     public void user_update_their_last_name() {
-        String name1 = configLoader.get("address.lastName");
-        String name2 = configLoader.get("address.lastName1");
+        String name1 = context.credsLoader.get("address.lastName");
+        String name2 = context.credsLoader.get("address.lastName1");
 
         String currentName = accountPage.getEnteredName();
 
@@ -256,9 +231,11 @@ public class AccountStep {
     }
     @When("user validate that personal details successfully updated")
     public void user_validate_that_personal_details_successfully_updated() {
-        scenario.log("Your profile has been updated successfully");
+        String actualText = accountPage.getUpdateChangesText();
+        Assert.assertTrue(actualText.contains("Profile updated"), "Profile not updated");
+        Allure.step("Verifying that personal details successfully updated");
+        scenario.log("Profile updated successfully");
     }
-
     @When("user clicks on the manage address")
     public void user_clicks_on_the_manage_address(){
         accountPage.clickOnManageAddress();
@@ -269,33 +246,38 @@ public class AccountStep {
     }
     @When("user enters the new first name")
     public void user_enters_the_new_first_name() {
-        String name = configLoader.get("address.new.fName");
+        String name = context.credsLoader.get("address.new.fName");
         accountPage.enterUpdateFirstName(name);
-        scenario.log("user Entered Name: " + name);
+        Allure.step("Entered New First Name: " + name);
+        scenario.log("Entered New First Name: " + name);
     }
     @When("user enters the new last name")
     public void user_enters_the_new_last_name() {
-        String name = configLoader.get("address.new.lName");
+        String name = context.credsLoader.get("address.new.lName");
         accountPage.enterUpdateLastName(name);
-        scenario.log("user Entered Name: " + name);
+        Allure.step("Entered New Last Name: " + name);
+        scenario.log("Entered New Last Name: " + name);
     }
     @When("user enters the new number")
     public void user_enters_the_new_number() {
-        String mob = configLoader.get("address.new.mobile");
+        String mob = context.credsLoader.get("address.new.mobile");
         accountPage.enterTheMobile(mob);
-        scenario.log("user Entered Name: " + mob);
+        Allure.step("Entered Mobile Number: " + mob);
+        scenario.log("Entered Mobile Number: " + mob);
     }
     @When("user enters the new pin code")
     public void user_enters_the_new_pin_code() {
-        String pin = configLoader.get("address.new.pin");
+        String pin = context.credsLoader.get("address.new.pin");
         accountPage.enterThePinCode(pin);
-        scenario.log("user Entered Name: " + pin);
+        Allure.step("Entered Pin Code: " + pin);
+        scenario.log("Entered Pin Code: " + pin);
     }
     @When("user enters the new address")
     public void user_enters_the_new_address() {
-        String address = configLoader.get("address.new.line");
+        String address = context.credsLoader.get("address.new.line");
         accountPage.enterTheAddress(address);
-        scenario.log("user Entered Name: " + address);
+        Allure.step("Entered Address: " + address);
+        scenario.log("Entered Address: " + address);
     }
     @When("user selects a address type as work")
     public void user_selects_a_address_type_as_work() {
@@ -306,8 +288,11 @@ public class AccountStep {
         accountPage.clickOnAddAddress();
     }
     @When("user validate that new address added successfully")
-    public void user_validate_that_new_address_added_successfully() {
-        scenario.log("New address has been created successfully.");
+    public void user_validate_that_new_address_added_successfully() throws InterruptedException {
+        String actualText = accountPage.getAddressUpdatedText();
+        Assert.assertTrue(actualText.contains("Address Added Successfully !"), "New address not updated");
+        Allure.step("Verifying that new address added successfully");
+        scenario.log("New address updated successfully");
     }
     @Then("user updates an existing address")
     public void user_updates_an_existing_address() {
@@ -318,8 +303,11 @@ public class AccountStep {
         accountPage.clickOnUpdateAddress();
     }
     @Then("Validate that existing address has updated")
-    public void validate_that_existing_address_has_updated() {
-        scenario.log("Changes Saved");
+    public void validate_that_existing_address_has_updated() throws InterruptedException {
+        String actualText = accountPage.getExistingAddressUpdatedText();
+        Assert.assertTrue(actualText.contains("Address Updated Successfully!"), "Existing profile not updated");
+        Allure.step("Verifying that existing address added successfully");
+        scenario.log("Existing address updated successfully");
     }
     @Then("user is able to delete exiting address")
     public void user_is_able_to_delete_exiting_address() {
@@ -330,10 +318,12 @@ public class AccountStep {
         accountPage.clickOnConfirmRemoveButton();
     }
     @Then("user validate that delete address message is displayed")
-    public void user_validate_that_delete_address_message_is_displayed() {
-        scenario.log("Address has been deleted successfully");
+    public void user_validate_that_delete_address_message_is_displayed() throws InterruptedException {
+        String actualText = accountPage.getConfirmDeleteText();
+        Assert.assertTrue(actualText.contains("Address Deleted Successfully!"), "Address not deleted");
+        Allure.step("Verifying that delete address message is displayed");
+        scenario.log("Address deleted successfully");
     }
-
     @When("user clicks on the my orders option")
     public void user_clicks_on_the_my_order_option() {
         accountPage.clickOnMyOrders();
@@ -344,7 +334,6 @@ public class AccountStep {
         Assert.assertTrue(actualText.contains("Online"), "User not navigated to orders page");
         scenario.log("User Successfully Landed Into The orders Page");
     }
-
     @When("user selects the first product")
     public void user_selects_the_first_product() {
         accountPage.captureMyOrderID();
@@ -352,21 +341,24 @@ public class AccountStep {
     @When("Capture existing Order ID from the list")
     public void capture_orderID() {
         orderId = accountPage.orderID();
+        Allure.step("Existing Order ID IS : " + orderId);
         scenario.log("Existing Order ID IS : " + orderId);
     }
     @When("Enter that value in Search box")
     public void enterOrderID() {
         accountPage.enterMyOrderID(orderId);
+        Allure.step("Enter Order ID : " + orderId);
         scenario.log("Entered Order ID: " + orderId);
     }
     @When("Capture expected Order ID from the list and validating")
     public void capture_ExpectedorderID() {
-        ExpectedOrderId = accountPage.orderID();
-        scenario.log("Actual Order ID IS : " + ExpectedOrderId);
-        Assert.assertEquals(orderId,ExpectedOrderId, "Expected Order ID is not matching with Searching order ID");
+        expectedOrderId = accountPage.orderID();
+        Allure.step("Actual Order ID: " + expectedOrderId);
+        scenario.log("Actual Order ID IS : " + expectedOrderId);
+        Assert.assertEquals(orderId,expectedOrderId, "Expected Order ID is not matching with Searching order ID");
+        Allure.step("User successfully verified the search functionality");
         scenario.log("User successfully verified the search functionality");
     }
-
     @When("system should display the following components in the FCC section")
     public void system_should_display_the_following_components_in_the_FCC_section(DataTable dataTable) {
         List<String> missingComponents = accountPage.validateFCCComponentsByText();
@@ -375,4 +367,133 @@ public class AccountStep {
                 "Missing account components: " + missingComponents
         );
     }
+    @Then("user clicks on the Wallet option")
+    public void user_clicks_on_the_wallet_option() {
+        accountPage.clickMyWallet();
+    }
+    @Then("Validating the Wallet page")
+    public void validating_the_wallet_page() {
+        String actualText = accountPage.getMyWalletText();
+        Assert.assertTrue(actualText.contains("SSBeauty Wallet"), "User not landed to Wallet page");
+        Allure.step("Verifying that User is landed to Wallet Page");
+        scenario.log("User landed to Wallet Page");
+    }
+    @Then("Validating the Wallet page for SSBeauty Wallet Advantages Details")
+    public void validating_the_wallet_page_for_ss_beauty_wallet_advantages_details() {
+        String actualText = accountPage.getWalletAdvantagesText();
+        Assert.assertTrue(actualText.contains("SSBeauty Wallet can be used on both shoppersstop.com and ssbeauty.in"),
+                "User not landed to Wallet page");
+        Allure.step("Verifying that User is landed to Wallet Page and SSBeauty Wallet Advantages Details");
+        scenario.log("User landed to Wallet Page");
+    }
+    @Then("user clicks on the Activate button")
+    public void user_clicks_on_the_activate_button() {
+        accountPage.clickWalletActivationButton();
+    }
+    @Then("Validates whether the OTP pop-up is displayed")
+    public void validates_whether_the_otp_pop_up_is_displayed() {
+        String actualText = accountPage.getWalletActivationOTPText();
+        Assert.assertTrue(actualText.contains("VERIFY MOBILE NUMBER"), "Activated Button is not visible may be user already has wallet activation");
+        Allure.step("Verifying that Activated Button is displayed");
+        scenario.log("Activated Button is displayed");
+    }
+    @Then("Validate that please Note section is displayed")
+    public void validate_that_please_note_section_is_displayed() {
+        String actualText = accountPage.getWalletPleaseNoteText();
+        Assert.assertTrue(actualText.contains("Please Note"), "User not seen the Please Note section");
+        Allure.step("Verifying that Please Note is displayed");
+        scenario.log("Please Note is displayed");
+    }
+    @When("user clicks on the help and support")
+    public void user_clicks_on_the_help_and_support() {
+        accountPage.clickHelpAndSupport();
+    }
+    @Then("Validate Help and Support page")
+    public void validate_help_and_support_page() {
+        String actualText = accountPage.getHelpAndSupportText();
+        Assert.assertTrue(actualText.contains("Browse Topics"), "User not seen the Help and Support page");
+        Allure.step("Verifying that Help and Support page is visible");
+        scenario.log("Help and Support page is visible");
+    }
+    @When("user clicks on the get in touch button")
+    public void user_clicks_on_the_get_in_touch_button() {
+        accountPage.clickGetInTouch();
+    }
+    @Then("Validate that contact us page is displayed")
+    public void validate_that_contact_us_page_is_displayed() {
+        String actualText = accountPage.getFirstNameLabelText();
+        Assert.assertTrue(actualText.contains("First Name"), "User not navigated to contact us page");
+        scenario.log("User successfully Landed into the contact us Page");
+    }
+    @When("user enters the first name")
+    public void user_enters_the_first_name() {
+        String name = context.credsLoader.get("address.firstName");
+        accountPage.enterContactFirstName(name);
+        Allure.step("User enters the first name: " + name);
+        scenario.log("User enters the first name: " + name);
+    }
+    @When("user enters the last name")
+    public void user_enters_the_last_name() {
+        String name = context.credsLoader.get("address.lastName");
+        accountPage.enterContactLastName(name);
+        Allure.step("User enters the last name: " + name);
+        scenario.log("User enters the last name: " + name);
+    }
+    @When("user enters the email ID")
+    public void user_enters_the_email_id() {
+        String emailId = context.credsLoader.get("address.emailId");
+        accountPage.enterContactEmail(emailId);
+        Allure.step("User enters the email ID: " + emailId);
+        scenario.log("User enters the email ID: " + emailId);
+    }
+    @When("user enters the mobile number")
+    public void user_enters_the_mobile_number() {
+        String mobileNumber = context.credsLoader.get("address.new.mobile");
+        accountPage.enterContactPhone(mobileNumber);
+        Allure.step("User enters the mobile number: " + mobileNumber);
+        scenario.log("User enters the mobile number: " + mobileNumber);
+    }
+    @When("user enters the title")
+    public void user_enters_the_title() {
+        String title = context.credsLoader.get("address.title");
+        accountPage.enterContactTitle(title);
+        Allure.step("User enters the title: " + title);
+        scenario.log("User enters the title: " + title);
+    }
+    @Then("user selects the category")
+    public void user_selects_the_category() {
+        accountPage.selectCategory();
+    }
+    @Then("user selects the subcategory")
+    public void user_selects_the_subcategory() {
+        accountPage.selectSubCategory();
+    }
+    @Then("user enters the Order ID")
+    public void user_enters_the_order_id() {
+        accountPage.enterOrderID("U_SSB_1214073");
+    }
+    @Then("user enters the comments")
+    public void user_enters_the_comments() {
+        String comments = context.credsLoader.get("address.comments");
+        accountPage.enterComments(comments);
+        Allure.step("User enters the comments: " + comments);
+        scenario.log("User enters the comments: " + comments);
+    }
+    @Then("user reads the captcha and stores it locally")
+    public void user_reads_the_captcha_and_stores_it_locally() {
+        captcha = accountPage.getCaptchaText();
+        Allure.step("User reads the captcha and stores it locally: " + captcha);
+        scenario.log("User reads the captcha and stores it locally: " + captcha);
+    }
+    @Then("user enters the stored captcha")
+    public void user_enters_the_stored_captcha() {
+        accountPage.enterCaptcha(captcha);
+        Allure.step("User enters the stored captcha: " + captcha);
+        scenario.log("User enters the stored captcha: " + captcha);
+    }
+    @Then("user clicks on the Submit button")
+    public void user_clicks_on_the_submit_button() {
+        accountPage.clickSubmitButton();
+    }
+
 }
